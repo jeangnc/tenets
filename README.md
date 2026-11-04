@@ -13,7 +13,7 @@ The coding principles I hold across projects, enforced as ESLint rules and golan
 | Compose components, not render props | [`no-render-prop`](docs/rules/no-render-prop.md) | |
 | Styles stay predictable | [`no-important-tailwind`](docs/rules/no-important-tailwind.md), [`no-tailwind-space-between`](docs/rules/no-tailwind-space-between.md), [`no-duplicate-class-string`](docs/rules/no-duplicate-class-string.md) | |
 | Lists own their empty state | [`no-flashlist-empty-component`](docs/rules/no-flashlist-empty-component.md) | |
-| Code sits under its nearest owner | `@jean.gnc/tenets` `checkPlacement` | |
+| Code sits under its nearest owner | `eslint-plugin-tenets/placement` | |
 
 ## ESLint
 
@@ -42,7 +42,7 @@ Presets: `recommended`, `typed`, `react`, `react-native`, `tailwind`. `readabili
 
 ```js
 import ts from "typescript";
-import { checkPlacement } from "@jean.gnc/tenets";
+import { checkPlacement } from "eslint-plugin-tenets/placement";
 
 checkPlacement(ts, { tsconfig: "tsconfig.json", exempt: [/^lib\//], routerRoots: ["src/routes"] });
 ```
