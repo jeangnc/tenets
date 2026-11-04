@@ -2,21 +2,19 @@ name: Release
 
 on:
   push:
-    branches: [main]
-
-permissions:
-  contents: write
-  pull-requests: write
-  id-token: write
+    tags: ["v*"]
 
 jobs:
-  npm:
+  publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     defaults:
       run:
         working-directory: js
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v4
         with:
           package_json_file: js/package.json
@@ -26,12 +24,32 @@ jobs:
           cache: pnpm
           cache-dependency-path: js/pnpm-lock.yaml
           registry-url: https://registry.npmjs.org
-      - run: pnpm install --frozen-lockfile
-      - uses: changesets/action@v1
+      - uses: actions/setup-go@v6
         with:
-          cwd: js
-          version: pnpm changeset version
-          publish: pnpm release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_PROVENANCE: "true"
+          go-version-file: go/go.mod
+      - run: go vet ./... && go test ./...
+        working-directory: go
+      - run: pnpm install --frozen-lockfile
+      - name: Verify tag matches every package version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          for pkg in packages/*/package.json; do
+            version=$(node -p "require('./$pkg').version")
+            if [ "$tag" != "$version" ]; then
+              echo "::error::Tag v$tag does not match $pkg version $version"
+              exit 1
+            fi
+          done
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - name: Publish npm packages
+        run: |
+          for dir in packages/*/; do
+            (cd "$dir" && npm publish --access public --provenance)
+          done
+      - name: Tag Go module
+        working-directory: .
+        run: |
+          git tag "go/$GITHUB_REF_NAME"
+          git push origin "go/$GITHUB_REF_NAME"

@@ -1,6 +1,6 @@
 {
-  "name": "@jeangnc/tenets",
-  "version": "0.0.0",
+  "name": "@jean.gnc/tenets",
+  "version": "0.1.0",
   "description": "Whole-graph checks for jeangnc's coding tenets: hooks and components sit under their nearest owner",
   "license": "MIT",
   "type": "module",

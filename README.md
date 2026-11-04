@@ -13,7 +13,7 @@ The coding principles I hold across projects, enforced as ESLint rules and golan
 | Compose components, not render props | [`no-render-prop`](docs/rules/no-render-prop.md) | |
 | Styles stay predictable | [`no-important-tailwind`](docs/rules/no-important-tailwind.md), [`no-tailwind-space-between`](docs/rules/no-tailwind-space-between.md), [`no-duplicate-class-string`](docs/rules/no-duplicate-class-string.md) | |
 | Lists own their empty state | [`no-flashlist-empty-component`](docs/rules/no-flashlist-empty-component.md) | |
-| Code sits under its nearest owner | `@jeangnc/tenets` `checkPlacement` | |
+| Code sits under its nearest owner | `@jean.gnc/tenets` `checkPlacement` | |
 
 ## ESLint
 
@@ -42,7 +42,7 @@ Presets: `recommended`, `typed`, `react`, `react-native`, `tailwind`. `readabili
 
 ```js
 import ts from "typescript";
-import { checkPlacement } from "@jeangnc/tenets";
+import { checkPlacement } from "@jean.gnc/tenets";
 
 checkPlacement(ts, { tsconfig: "tsconfig.json", exempt: [/^lib\//], routerRoots: ["src/routes"] });
 ```
@@ -65,5 +65,9 @@ Build with `golangci-lint custom`, then run `./custom-gcl run`. Settings are in 
 
 ## Releasing
 
-- npm: add a changeset (`pnpm changeset` in `js/`); merging the release PR publishes with provenance.
-- Go: run the `release-go` workflow with a version; it tags `go/vX.Y.Z`.
+```sh
+cd js && pnpm bump 0.2.0
+git commit -am "Release v0.2.0" && git tag v0.2.0 && git push --follow-tags
+```
+
+The `v*` tag publishes both npm packages through npm trusted publishing (OIDC, with provenance) and tags the Go module `go/v0.2.0`.

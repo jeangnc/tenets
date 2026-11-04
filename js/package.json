@@ -7,11 +7,9 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
-    "changeset": "changeset",
-    "release": "pnpm build && changeset publish"
+    "bump": "pnpm -r exec npm version --no-git-tag-version"
   },
   "devDependencies": {
-    "@changesets/cli": "^3.0.3",
     "@types/node": "^24.0.0",
     "prettier": "3.6.2",
     "tsdown": "^0.23.5",
