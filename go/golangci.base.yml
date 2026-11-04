@@ -1,0 +1,165 @@
+version: "2"
+run:
+  timeout: 20m
+linters:
+  default: none
+  enable:
+    - govet
+    - staticcheck
+    - errcheck
+    - ineffassign
+    - unused
+    - errorlint
+    - bodyclose
+    - contextcheck
+    - nilerr
+    - nilnesserr
+    - rowserrcheck
+    - sqlclosecheck
+    - asasalint
+    - durationcheck
+    - makezero
+    - reassign
+    - recvcheck
+    - wastedassign
+    - noctx
+    - bidichk
+    - gocheckcompilerdirectives
+    - mirror
+    - iface
+    - interfacebloat
+    - gosec
+    - nilnil
+    - containedctx
+    - usetesting
+    - predeclared
+    - forcetypeassert
+    - gochecknoinits
+    - revive
+    - gocritic
+    - unconvert
+    - unparam
+    - misspell
+    - decorder
+    - funcorder
+    - dupl
+    - nakedret
+    - funlen
+    - gocognit
+    - nestif
+    - testpackage
+    - thelper
+    - tparallel
+    - copyloopvar
+    - intrange
+    - usestdlibvars
+    - perfsprint
+    - exhaustive
+    - featureenvy
+    - leakednamespace
+  settings:
+    custom:
+      featureenvy:
+        type: module
+        description: Find free functions that read only one type they could become a method of.
+        settings:
+          module: MODULE_PATH
+      leakednamespace:
+        type: module
+        description: Find sibling Go files with repeated namespace prefixes or suffixes.
+    dupl:
+      threshold: 100
+    funlen:
+      lines: 80
+      statements: 60
+    nakedret:
+      max-func-lines: 5
+    gocognit:
+      min-complexity: 20
+    nestif:
+      min-complexity: 4
+    errcheck:
+      check-type-assertions: true
+    exhaustive:
+      default-signifies-exhaustive: true
+    staticcheck:
+      checks:
+        - all
+        - "-ST1000"
+        - "-ST1020"
+        - "-ST1021"
+        - "-ST1022"
+    interfacebloat:
+      max: 30
+    gosec:
+      excludes:
+        - G104
+        - G115
+    decorder:
+      dec-order:
+        - const
+        - var
+        - type
+        - func
+      disable-dec-order-check: false
+      disable-init-func-first-check: false
+      disable-dec-num-check: true
+    funcorder:
+      constructor: true
+      struct-method: false
+      alphabetical: false
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - style
+        - performance
+      disabled-checks:
+        - ifElseChain
+        - commentedOutCode
+        - hugeParam
+        - rangeValCopy
+    revive:
+      rules:
+        - name: argument-limit
+          arguments:
+            - 5
+        - name: early-return
+        - name: indent-error-flow
+        - name: errorf
+        - name: bare-return
+        - name: defer
+        - name: modifies-value-receiver
+        - name: range-val-address
+        - name: redefines-builtin-id
+        - name: duplicated-imports
+        - name: empty-block
+        - name: if-return
+        - name: struct-tag
+        - name: var-naming
+        - name: context-as-argument
+        - name: context-keys-type
+        - name: error-return
+        - name: receiver-naming
+        - name: waitgroup-by-value
+        - name: unused-parameter
+          arguments:
+            - allowRegex: "^_"
+        - name: unused-receiver
+          arguments:
+            - allowRegex: "^_"
+        - name: confusing-results
+        - name: unnecessary-stmt
+        - name: unexported-return
+formatters:
+  exclusions:
+    generated: lax
+  enable:
+    - gofumpt
+    - gci
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(MODULE_PATH)
+      custom-order: true

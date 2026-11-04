@@ -1,0 +1,47 @@
+{
+  "name": "eslint-plugin-tenets",
+  "version": "0.0.0",
+  "description": "ESLint rules that encode jeangnc's coding tenets",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeangnc/tenets.git",
+    "directory": "js/packages/eslint-plugin"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown src/index.ts --format esm --dts",
+    "test": "vitest run",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@typescript-eslint/utils": "^8.72.1"
+  },
+  "peerDependencies": {
+    "eslint": "^9.39.0 || ^10.0.0",
+    "eslint-plugin-sonarjs": ">=3",
+    "typescript": ">=5.9 <6.1",
+    "typescript-eslint": "^8.53.0"
+  },
+  "peerDependenciesMeta": {
+    "eslint-plugin-sonarjs": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.72.1",
+    "@typescript-eslint/rule-tester": "^8.72.1",
+    "eslint": "^10.14.0",
+    "eslint-plugin-sonarjs": "^4.2.2",
+    "typescript-eslint": "^8.72.1"
+  }
+}
