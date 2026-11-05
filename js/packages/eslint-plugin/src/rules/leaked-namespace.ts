@@ -20,6 +20,7 @@ type Siblings = { files: string[]; directories: Set<string> };
 const scriptExtension = /\.(?:tsx?|jsx?)$/;
 const nonModuleFile = /\.(?:test|spec|gen|generated)\.|\.d\.tsx?$/;
 const allDirections: Direction[] = ["prefix", "suffix"];
+const hookMarker = /^use(?=[A-Z])/;
 
 export const leakedNamespace = createRule<Options, "leakedNamespace">({
   name: "leaked-namespace",
@@ -100,6 +101,10 @@ function stem(name: string) {
   return name.replace(scriptExtension, "");
 }
 
+function namespaceStem(name: string) {
+  return stem(name).replace(hookMarker, "");
+}
+
 function siblingsOf(directory: string, isModule: (name: string) => boolean): Siblings {
   const entries = readEntries(directory);
 
@@ -122,8 +127,8 @@ function readEntries(directory: string) {
 
 function clusterOf(basename: string, siblings: Siblings, direction: Direction): Cluster | null {
   const shared = direction === "prefix" ? sharedPrefix : sharedSuffix;
-  const name = stem(basename);
-  const tokenWith = (sibling: string) => shared(name, stem(sibling));
+  const name = namespaceStem(basename);
+  const tokenWith = (sibling: string) => shared(name, namespaceStem(sibling));
   const token = siblings.files
     .filter((sibling) => sibling !== basename)
     .map(tokenWith)

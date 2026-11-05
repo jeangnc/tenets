@@ -12,7 +12,7 @@ ledger/
   barWire.ts         ✗
 ```
 
-Word boundaries are an uppercase letter or the character after `_`, so `foo_bar.ts` and `foobar.ts` never cluster. A prefix cluster is skipped when a sibling directory already has the prefix's name. `index.*`, `*.test.*`, `*.spec.*`, `*.gen.*`, `*.generated.*`, and `.d.ts` files neither report nor count as siblings. Only `.ts`, `.tsx`, `.js`, and `.jsx` files take part.
+Word boundaries are an uppercase letter or the character after `_`, so `foo_bar.ts` and `foobar.ts` never cluster. The hook marker `use` before an uppercase letter is not a token: `useFoo.ts` and `useBar.ts` never cluster, `useFormDraft.ts` and `useFormTracking.ts` cluster on `Form` (→ `hooks/form/useDraft.ts`, which `folder-conventions` accepts), and `useAccountSchedules.ts` and `useSchedules.ts` cluster on the suffix `Schedules`. A prefix cluster is skipped when a sibling directory already has the prefix's name. `index.*`, `*.test.*`, `*.spec.*`, `*.gen.*`, `*.generated.*`, and `.d.ts` files neither report nor count as siblings. Only `.ts`, `.tsx`, `.js`, and `.jsx` files take part.
 
 ## Options
 

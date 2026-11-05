@@ -26,8 +26,39 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
     { code, filename: fixture("pascal-prefix/FooBar.tsx"), options: [{ minClusterSize: 3 }] },
     { code, filename: fixture("camel-suffix/fooWire.ts"), options: [{ directions: ["prefix"] }] },
     { code, filename: "relative/FooBar.tsx" },
+    { code, filename: fixture("hooks/useFoo.ts") },
   ],
   invalid: [
+    {
+      code,
+      filename: fixture("hook-prefix/useFormDraft.ts"),
+      errors: [
+        {
+          messageId: "leakedNamespace",
+          data: {
+            direction: "prefix",
+            token: "Form",
+            members: "useFormDraft.ts, useFormTracking.ts",
+            directory: "Form",
+          },
+        },
+      ],
+    },
+    {
+      code,
+      filename: fixture("hook-suffix/useSchedules.ts"),
+      errors: [
+        {
+          messageId: "leakedNamespace",
+          data: {
+            direction: "suffix",
+            token: "Schedules",
+            members: "useAccountSchedules.ts, useSchedules.ts",
+            directory: "schedules",
+          },
+        },
+      ],
+    },
     {
       code,
       filename: fixture("pascal-prefix/FooBar.tsx"),

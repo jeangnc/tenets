@@ -18,6 +18,7 @@ ruleTester.run("folder-conventions", folderConventions, {
     { code, filename: "src/features/ledger/hooks/usePaymentDraft.ts" },
     { code, filename: "src/features/ledger/hooks/useLedgerTable.tsx" },
     { code, filename: "src/features/ledger/hooks/index.ts" },
+    { code, filename: "src/features/ledger/hooks/form/useDraft.ts" },
     { code, filename: "src/features/ledger/hooks/usePaymentDraft.test.ts" },
     { code, filename: "src/features/ledger/hooks/usePaymentDraft.spec.tsx" },
     { code, filename: "src/features/ledger/lib/entrySubmit.ts" },
