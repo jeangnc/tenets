@@ -43,10 +43,10 @@ version: v2.7.0
 plugins:
   - module: github.com/jeangnc/tenets/go
     import: github.com/jeangnc/tenets/go/featureenvy
-    version: v0.1.1
+    version: v0.2.0
   - module: github.com/jeangnc/tenets/go
     import: github.com/jeangnc/tenets/go/leakednamespace
-    version: v0.1.1
+    version: v0.2.0
 ```
 
 Build with `golangci-lint custom`, then run `./custom-gcl run`. Settings are in each rule's doc. [`go/golangci.base.yml`](go/golangci.base.yml) is the reference config for third-party linters.
