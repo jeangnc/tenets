@@ -1,13 +1,11 @@
 import type { Linter } from "eslint";
-import type { RuleName } from "../rules.ts";
+import { type RuleName, rules } from "../rules.ts";
 
 type Preset = Partial<Record<`tenets/${RuleName}`, Linter.RuleEntry>>;
 
-export const recommended: Preset = {
-  "tenets/destructure-dot-access": "error",
-  "tenets/destructure-jsx-dot-access": "error",
-  "tenets/leaked-namespace": "error",
-};
+export const recommended: Preset = Object.fromEntries(
+  Object.keys(rules).map((name) => [`tenets/${name}`, "error"]),
+);
 
 export const typed: Preset = {
   "tenets/feature-envy": "warn",

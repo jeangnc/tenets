@@ -25,18 +25,15 @@ pnpm add -D eslint-plugin-tenets
 import tenets, { readabilityRules } from "eslint-plugin-tenets";
 
 export default [
-  tenets.configs.recommended,
-  tenets.configs.react,
-  tenets.configs.tailwind,
-  { rules: readabilityRules },
   {
-    ...tenets.configs.typed,
+    ...tenets.configs.recommended,
     languageOptions: { parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname } },
   },
+  { rules: readabilityRules },
 ];
 ```
 
-Presets: `recommended`, `typed`, `react`, `react-native`, `tailwind`. `readabilityRules` needs `eslint-plugin-sonarjs`.
+`recommended` enables every rule at `error` and needs typed linting for `feature-envy`. Subsets: `typed`, `react`, `react-native`, `tailwind`. `readabilityRules` needs `eslint-plugin-sonarjs`.
 
 ## golangci-lint
 

@@ -16,7 +16,13 @@ describe("eslint-plugin-tenets", () => {
     expect(existsSync(`${docsDirectory}${name}.md`)).toBe(true);
   });
 
-  it.each(Object.entries(tenets.configs).filter(([name]) => name !== "typed"))(
+  it("enables every rule through the recommended preset", () => {
+    expect(Object.keys(tenets.configs.recommended.rules ?? {}).sort()).toEqual(
+      Object.keys(tenets.rules).map((name) => `tenets/${name}`).sort(),
+    );
+  });
+
+  it.each(Object.entries(tenets.configs).filter(([name]) => !["recommended", "typed"].includes(name)))(
     "loads the %s preset without configuration errors",
     (_name, config) => {
       expect(lint("export const value = 1;\n", config)).toEqual([]);
@@ -25,7 +31,8 @@ describe("eslint-plugin-tenets", () => {
 
   it("reports repeated dot-access through the recommended preset", () => {
     const code = "import * as format from './format';\nformat.money(1);\nformat.date(2);\n";
-    expect(lint(code, tenets.configs.recommended).map(({ ruleId }) => ruleId)).toEqual([
+    const { "tenets/feature-envy": _typed, ...untypedRules } = tenets.configs.recommended.rules ?? {};
+    expect(lint(code, { ...tenets.configs.recommended, rules: untypedRules }).map(({ ruleId }) => ruleId)).toEqual([
       "tenets/destructure-dot-access",
       "tenets/destructure-dot-access",
     ]);
