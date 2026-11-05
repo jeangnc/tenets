@@ -12,11 +12,11 @@ const { isLoading, data } = useEntries();
 return isLoading ? null : data;                   // ✓
 ```
 
-Skipped: `useRef` and `useSharedValue` returns (their `.current` / `.value` is a live accessor), and the bases `screen` and `React`.
+Skipped: `useRef` and `useSharedValue` returns (their `.current` / `.value` is a live accessor), and the bases `screen`, `React`, `z`, `vi`, and `expect`, whose members are meant to be dot-accessed (`vi.mock` must stay a call on `vi` to be hoisted).
 
 ## Options
 
 | Option | Default | Meaning |
 |---|---|---|
 | `minCount` | `2` | Accesses needed to report |
-| `allowBase` | `[]` | Extra base names never reported, e.g. `["z", "Platform", "StyleSheet"]` |
+| `allowBase` | `[]` | Extra base names never reported, e.g. `["Platform", "StyleSheet"]` |

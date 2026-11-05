@@ -7,7 +7,7 @@ type Scope = TSESLint.Scope.Scope;
 type MemberAccess = TSESTree.MemberExpression | TSESTree.JSXMemberExpression;
 
 const liveAccessorHooks = new Set(["useRef", "useSharedValue"]);
-const defaultAllowedBases = ["screen", "React"];
+const defaultAllowedBases = ["screen", "React", "z", "vi", "expect"];
 
 export const destructureDotAccess = createRule<Options, "destructure">({
   name: "destructure-dot-access",

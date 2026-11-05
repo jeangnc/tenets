@@ -9,7 +9,10 @@ ruleTester.run("destructure-dot-access", destructureDotAccess, {
     "function C() { const offset = useSharedValue(0); offset.value = 1; return offset.value; }",
     "import { screen } from 'x'; screen.getByText('a'); screen.getByRole('b');",
     "import * as React from 'react'; React.useState(); React.useMemo();",
-    { code: "import * as z from 'zod'; z.string(); z.number();", options: [{ allowBase: ["z"] }] },
+    "import { z } from 'zod'; z.string(); z.number();",
+    "import { vi } from 'vitest'; vi.mock('a'); vi.fn();",
+    "import { expect } from 'vitest'; expect.any(String); expect.objectContaining({});",
+    { code: "import * as format from './format'; format.money(); format.date();", options: [{ allowBase: ["format"] }] },
     {
       code: "function C() { const t = useThing(); return t.a + t.b; }",
       options: [{ minCount: 3 }],
