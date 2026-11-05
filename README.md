@@ -55,7 +55,7 @@ Build with `golangci-lint custom`, then run `./custom-gcl run`. Settings are in 
 
 ```sh
 cd js && pnpm bump 0.2.0
-git commit -am "Release v0.2.0" && git tag v0.2.0 && git push --follow-tags
+git commit -am "Release v0.2.0" && git tag -a v0.2.0 -m v0.2.0 && git push --follow-tags
 ```
 
 The `v*` tag publishes `eslint-plugin-tenets` through npm trusted publishing (OIDC, with provenance) and tags the Go module `go/v0.2.0`.
