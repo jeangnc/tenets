@@ -43,10 +43,10 @@ version: v2.7.0
 plugins:
   - module: github.com/jeangnc/tenets/go
     import: github.com/jeangnc/tenets/go/featureenvy
-    version: v0.2.1
+    version: v0.2.2
   - module: github.com/jeangnc/tenets/go
     import: github.com/jeangnc/tenets/go/leakednamespace
-    version: v0.2.1
+    version: v0.2.2
 ```
 
 Build with `golangci-lint custom`, then run `./custom-gcl run`. Settings are in each rule's doc. [`go/golangci.base.yml`](go/golangci.base.yml) is the reference config for third-party linters.
@@ -54,8 +54,8 @@ Build with `golangci-lint custom`, then run `./custom-gcl run`. Settings are in 
 ## Releasing
 
 ```sh
-cd js && pnpm bump 0.2.1
-git commit -am "Release v0.2.1" && git tag -a v0.2.1 -m v0.2.1 && git push --follow-tags
+cd js && pnpm bump 0.2.2
+git commit -am "Release v0.2.2" && git tag -a v0.2.2 -m v0.2.2 && git push --follow-tags
 ```
 
-The `v*` tag publishes `eslint-plugin-tenets` through npm trusted publishing (OIDC, with provenance) and tags the Go module `go/v0.2.1`.
+The `v*` tag publishes `eslint-plugin-tenets` through npm trusted publishing (OIDC, with provenance) and tags the Go module `go/v0.2.2`.
