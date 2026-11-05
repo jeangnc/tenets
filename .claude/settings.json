@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [],
+    "deny": [
+    ],
+    "ask": []
+  },
+
+  "hooks": {
+  },
+
+  "enabledPlugins": {
+    "dev@jeangnc-marketplace": true
+  }
+}
