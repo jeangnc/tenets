@@ -13,7 +13,7 @@ The coding principles I hold across projects, enforced as ESLint rules and golan
 | Compose components, not render props | [`no-render-prop`](docs/rules/no-render-prop.md) | |
 | Styles stay predictable | [`no-important-tailwind`](docs/rules/no-important-tailwind.md), [`no-tailwind-space-between`](docs/rules/no-tailwind-space-between.md), [`no-duplicate-class-string`](docs/rules/no-duplicate-class-string.md) | |
 | Lists own their empty state | [`no-flashlist-empty-component`](docs/rules/no-flashlist-empty-component.md) | |
-| Code lives under its nearest owner | [`eslint-plugin-tenets/placement`](docs/placement.md) | |
+| Code lives under its nearest owner | [`placement`](docs/rules/placement.md) | |
 
 ## ESLint
 
@@ -38,17 +38,6 @@ export default [
 
 Presets: `recommended`, `typed`, `react`, `react-native`, `tailwind`. `readabilityRules` needs `eslint-plugin-sonarjs`.
 
-## Placement
-
-A whole-graph check, run as a script. See [docs/placement.md](docs/placement.md).
-
-```js
-import ts from "typescript";
-import { checkPlacement } from "eslint-plugin-tenets/placement";
-
-checkPlacement(ts, { tsconfig: "tsconfig.json", exempt: [/^lib\//], routerRoots: ["src/routes"] });
-```
-
 ## golangci-lint
 
 ```yaml
@@ -57,10 +46,10 @@ version: v2.7.0
 plugins:
   - module: github.com/jeangnc/tenets/go
     import: github.com/jeangnc/tenets/go/featureenvy
-    version: v0.1.0
+    version: v0.1.1
   - module: github.com/jeangnc/tenets/go
     import: github.com/jeangnc/tenets/go/leakednamespace
-    version: v0.1.0
+    version: v0.1.1
 ```
 
 Build with `golangci-lint custom`, then run `./custom-gcl run`. Settings are in each rule's doc. [`go/golangci.base.yml`](go/golangci.base.yml) is the reference config for third-party linters.
@@ -72,4 +61,4 @@ cd js && pnpm bump 0.2.0
 git commit -am "Release v0.2.0" && git tag v0.2.0 && git push --follow-tags
 ```
 
-The `v*` tag publishes both npm packages through npm trusted publishing (OIDC, with provenance) and tags the Go module `go/v0.2.0`.
+The `v*` tag publishes `eslint-plugin-tenets` through npm trusted publishing (OIDC, with provenance) and tags the Go module `go/v0.2.0`.
