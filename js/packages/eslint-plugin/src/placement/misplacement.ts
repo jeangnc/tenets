@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
+import { groupingFolders } from "../grouping-folders.ts";
 import type { Graph } from "./graph.ts";
 import { isInside } from "./paths.ts";
 import { isTest, type Tree } from "./tree.ts";
@@ -20,7 +21,6 @@ type Placement = { home: string; accepted: string[] };
 
 const hookFile = /^use[A-Z]\w*\.tsx?$/;
 const componentFile = /^(?:[A-Z]\w*|index)\.tsx$/;
-const groupingFolder = new Set(["hooks", "components"]);
 const indexFiles = ["index.ts", "index.tsx"];
 
 export function misplacementsOf(tree: Tree, graph: Graph, policy: Policy): Misplacement[] {
@@ -180,7 +180,7 @@ function isComponentDirectory(tree: Tree, folder: string): boolean {
 }
 
 function withoutGrouping(folder: string): string {
-  return groupingFolder.has(basename(folder)) ? dirname(folder) : folder;
+  return groupingFolders.has(basename(folder)) ? dirname(folder) : folder;
 }
 
 function commonAncestor(folders: string[]): string {

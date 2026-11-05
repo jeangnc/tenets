@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { createRule } from "../create-rule.ts";
+import { groupingFolders } from "../grouping-folders.ts";
 
 type Direction = "prefix" | "suffix";
 
@@ -17,18 +18,25 @@ type Cluster = { direction: Direction; token: string; members: string[] };
 
 type Siblings = { files: string[]; directories: Set<string> };
 
+type Advice =
+  | { messageId: "leakedNamespace"; target: string }
+  | { messageId: "namesNamespace"; directory: string }
+  | { messageId: "namesNamespaceInGroupingFolder"; directory: string; target: string };
+
 const scriptExtension = /\.(?:tsx?|jsx?)$/;
+const componentExtension = /\.[jt]sx$/;
 const nonModuleFile = /\.(?:test|spec|gen|generated)\.|\.d\.tsx?$/;
 const allDirections: Direction[] = ["prefix", "suffix"];
 const hookMarker = /^use(?=[A-Z])/;
+const clusterText = "Files [{{members}}] repeat {{direction}} '{{token}}'";
 
-export const leakedNamespace = createRule<Options, "leakedNamespace">({
+export const leakedNamespace = createRule<Options, Advice["messageId"]>({
   name: "leaked-namespace",
   meta: {
     type: "suggestion",
     docs: {
       description:
-        "Disallow sibling files that repeat a filename prefix or suffix; promote it to a directory.",
+        "Disallow sibling files that repeat a filename prefix or suffix; promote it to a concept folder.",
     },
     schema: [
       {
@@ -48,8 +56,9 @@ export const leakedNamespace = createRule<Options, "leakedNamespace">({
       },
     ],
     messages: {
-      leakedNamespace:
-        "Files [{{members}}] repeat {{direction}} '{{token}}'. Group them under a directory named '{{directory}}'.",
+      leakedNamespace: `${clusterText}. Move this file to '{{target}}'.`,
+      namesNamespace: `${clusterText}, which this file is named after. Move the others under '{{directory}}'.`,
+      namesNamespaceInGroupingFolder: `${clusterText}, which this file is named after. Move this file to '{{target}}' and the others under '{{directory}}'.`,
     },
   },
   defaultOptions: [{ directions: allDirections, minTokenLength: 3, minClusterSize: 2, ignore: [] }],
@@ -70,26 +79,25 @@ export const leakedNamespace = createRule<Options, "leakedNamespace">({
     const basename = path.basename(filename);
     if (!isModule(basename)) return {};
 
-    const siblings = siblingsOf(path.dirname(filename), isModule);
+    const directory = path.dirname(filename);
+    const siblings = siblingsOf(directory, isModule);
     const clusters = directions
       .map((direction) => clusterOf(basename, siblings, direction))
       .filter((cluster): cluster is Cluster => cluster !== null)
       .filter(
         ({ token, members }) => token.length >= minTokenLength && members.length >= minClusterSize,
       );
+    const role = path.basename(directory);
 
     return {
       Program(node) {
-        for (const { direction, token, members } of clusters) {
+        for (const cluster of clusters) {
+          const { messageId, ...destination } = adviceFor(basename, cluster, role);
+          const { direction, token, members } = cluster;
           context.report({
             node,
-            messageId: "leakedNamespace",
-            data: {
-              direction,
-              token,
-              members: members.join(", "),
-              directory: directoryFor(direction, token),
-            },
+            messageId,
+            data: { direction, token, members: members.join(", "), ...destination },
           });
         }
       },
@@ -147,9 +155,8 @@ function sharedPrefix(a: string, b: string) {
   const matching = matchingLength(a, b, (index) => index);
   const aBoundaries = tokenBoundaries(a);
   const bBoundaries = tokenBoundaries(b);
-  for (let end = matching; end >= 0; end--) {
+  for (let end = matching; end > 0; end--) {
     if (aBoundaries.has(end) && bBoundaries.has(end)) return a.slice(0, end).replace(/_$/, "");
-    if (end === a.length || end === b.length) return a.slice(0, end);
   }
 
   return "";
@@ -161,7 +168,7 @@ function sharedSuffix(a: string, b: string) {
   const bBoundaries = tokenBoundaries(b);
   for (let size = matching; size > 0; size--) {
     if (aBoundaries.has(a.length - size) && bBoundaries.has(b.length - size)) {
-      return a.slice(a.length - size);
+      return a.slice(a.length - size).replace(/^_/, "");
     }
   }
 
@@ -179,14 +186,51 @@ function matchingLength(a: string, b: string, position: (index: number, text: st
 function tokenBoundaries(name: string) {
   const boundaries = new Set([0, name.length]);
   for (let index = 0; index < name.length; index++) {
-    if (/[A-Z]/.test(name[index] ?? "") || name[index - 1] === "_") boundaries.add(index);
+    if (/[A-Z_]/.test(name[index] ?? "") || name[index - 1] === "_") boundaries.add(index);
   }
 
   return boundaries;
 }
 
-function directoryFor(direction: Direction, token: string) {
-  if (direction === "prefix") return token;
+function adviceFor(basename: string, { direction, token, members }: Cluster, role: string): Advice {
+  const isInGroupingFolder = groupingFolders.has(role);
+  const hoist = isInGroupingFolder ? "../" : "";
+  const owned = members.some((member) => isOwner(member, token));
+  const concept = owned ? token : lowerFirst(token);
+  const directory = role === "hooks" ? `${hoist}${concept}/hooks/` : `${hoist}${concept}/`;
+  const leaf = leafOf(basename, direction, token);
 
-  return token.charAt(0).toLowerCase() + token.slice(1);
+  if (leaf !== null) return { messageId: "leakedNamespace", target: `${directory}${leaf}` };
+  if (!isInGroupingFolder) return { messageId: "namesNamespace", directory };
+
+  const target = role === "hooks" ? `${directory}${basename}` : `${hoist}${basename}`;
+
+  return { messageId: "namesNamespaceInGroupingFolder", directory, target };
+}
+
+function isOwner(member: string, token: string) {
+  return componentExtension.test(member) && stem(member) === token;
+}
+
+function lowerFirst(text: string) {
+  return text.charAt(0).toLowerCase() + text.slice(1);
+}
+
+function leafOf(basename: string, direction: Direction, token: string) {
+  const name = namespaceStem(basename);
+  const rest =
+    direction === "prefix"
+      ? name.slice(token.length).replace(/^_/, "")
+      : name.slice(0, name.length - token.length).replace(/_$/, "");
+  if (rest === "") return null;
+
+  const extension = basename.slice(stem(basename).length);
+  if (hookMarker.test(stem(basename))) return `use${upperFirst(rest)}${extension}`;
+  const leaf = /[a-z]/.test(name.charAt(0)) ? lowerFirst(rest) : upperFirst(rest);
+
+  return `${leaf}${extension}`;
+}
+
+function upperFirst(text: string) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }

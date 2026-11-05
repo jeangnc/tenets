@@ -27,34 +27,50 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
     { code, filename: fixture("camel-suffix/fooWire.ts"), options: [{ directions: ["prefix"] }] },
     { code, filename: "relative/FooBar.tsx" },
     { code, filename: fixture("hooks/useFoo.ts") },
+    { code, filename: fixture("bare-token/Foos.tsx") },
   ],
   invalid: [
     {
       code,
-      filename: fixture("hook-prefix/useFormDraft.ts"),
+      filename: fixture("hook-prefix/useFooBar.ts"),
       errors: [
         {
           messageId: "leakedNamespace",
           data: {
             direction: "prefix",
-            token: "Form",
-            members: "useFormDraft.ts, useFormTracking.ts",
-            directory: "Form",
+            token: "Foo",
+            members: "useFooBar.ts, useFooBaz.ts",
+            target: "foo/useBar.ts",
           },
         },
       ],
     },
     {
       code,
-      filename: fixture("hook-suffix/useSchedules.ts"),
+      filename: fixture("hook-suffix/useBarFoo.ts"),
       errors: [
         {
           messageId: "leakedNamespace",
           data: {
             direction: "suffix",
-            token: "Schedules",
-            members: "useAccountSchedules.ts, useSchedules.ts",
-            directory: "schedules",
+            token: "Foo",
+            members: "useBarFoo.ts, useFoo.ts",
+            target: "foo/useBar.ts",
+          },
+        },
+      ],
+    },
+    {
+      code,
+      filename: fixture("hook-suffix/useFoo.ts"),
+      errors: [
+        {
+          messageId: "namesNamespace",
+          data: {
+            direction: "suffix",
+            token: "Foo",
+            members: "useBarFoo.ts, useFoo.ts",
+            directory: "foo/",
           },
         },
       ],
@@ -69,37 +85,37 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
             direction: "prefix",
             token: "Foo",
             members: "FooBar.tsx, FooBaz.tsx",
-            directory: "Foo",
+            target: "foo/Bar.tsx",
           },
         },
       ],
     },
     {
       code,
-      filename: fixture("bare-token/AccountHeader.tsx"),
+      filename: fixture("bare-token/FooBar.tsx"),
       errors: [
         {
           messageId: "leakedNamespace",
           data: {
             direction: "prefix",
-            token: "Account",
-            members: "Account.tsx, AccountHeader.tsx",
-            directory: "Account",
+            token: "Foo",
+            members: "Foo.tsx, FooBar.tsx",
+            target: "Foo/Bar.tsx",
           },
         },
       ],
     },
     {
       code,
-      filename: fixture("bare-token/Account.tsx"),
+      filename: fixture("bare-token/Foo.tsx"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "namesNamespace",
           data: {
             direction: "prefix",
-            token: "Account",
-            members: "Account.tsx, AccountHeader.tsx, Accounts.tsx",
-            directory: "Account",
+            token: "Foo",
+            members: "Foo.tsx, FooBar.tsx",
+            directory: "Foo/",
           },
         },
       ],
@@ -114,7 +130,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
             direction: "prefix",
             token: "Foo",
             members: "FooBar.tsx, FooBaz.tsx",
-            directory: "Foo",
+            target: "foo/Bar.tsx",
           },
         },
       ],
@@ -129,7 +145,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
             direction: "prefix",
             token: "foo",
             members: "fooBar.ts, fooBaz.ts",
-            directory: "foo",
+            target: "foo/bar.ts",
           },
         },
       ],
@@ -144,7 +160,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
             direction: "prefix",
             token: "Undo",
             members: "UndoIcon.tsx, UndoRedoToolbar.tsx",
-            directory: "Undo",
+            target: "undo/RedoToolbar.tsx",
           },
         },
       ],
@@ -159,7 +175,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
             direction: "suffix",
             token: "Wire",
             members: "barWire.ts, fooWire.ts",
-            directory: "wire",
+            target: "wire/foo.ts",
           },
         },
       ],
@@ -174,7 +190,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
             direction: "suffix",
             token: "wire",
             members: "bar_wire.ts, foo_wire.ts",
-            directory: "wire",
+            target: "wire/foo.ts",
           },
         },
       ],
@@ -189,7 +205,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
             direction: "prefix",
             token: "foo",
             members: "foo_bar.ts, foo_baz.ts",
-            directory: "foo",
+            target: "foo/bar.ts",
           },
         },
       ],
@@ -204,7 +220,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
             direction: "prefix",
             token: "foo",
             members: "fooBarWire.ts, fooWire.ts",
-            directory: "foo",
+            target: "foo/wire.ts",
           },
         },
         {
@@ -213,7 +229,137 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
             direction: "suffix",
             token: "Wire",
             members: "fooBarWire.ts, fooWire.ts",
-            directory: "wire",
+            target: "wire/foo.ts",
+          },
+        },
+      ],
+    },
+    {
+      code,
+      filename: fixture("grouping-prefix/components/FooBar.tsx"),
+      errors: [
+        {
+          messageId: "leakedNamespace",
+          data: {
+            direction: "prefix",
+            token: "Foo",
+            members: "FooBar.tsx, FooBaz.tsx",
+            target: "../foo/Bar.tsx",
+          },
+        },
+      ],
+    },
+    {
+      code,
+      filename: fixture("grouping-hooks/hooks/useFooBar.ts"),
+      errors: [
+        {
+          messageId: "leakedNamespace",
+          data: {
+            direction: "prefix",
+            token: "Foo",
+            members: "useFooBar.ts, useFooBaz.ts",
+            target: "../foo/hooks/useBar.ts",
+          },
+        },
+      ],
+    },
+    {
+      code,
+      filename: fixture("grouping-owner/components/FooBar.tsx"),
+      errors: [
+        {
+          messageId: "leakedNamespace",
+          data: {
+            direction: "prefix",
+            token: "Foo",
+            members: "Foo.tsx, FooBar.tsx",
+            target: "../Foo/Bar.tsx",
+          },
+        },
+      ],
+    },
+    {
+      code,
+      filename: fixture("grouping-owner/components/Foo.tsx"),
+      errors: [
+        {
+          messageId: "namesNamespaceInGroupingFolder",
+          data: {
+            direction: "prefix",
+            token: "Foo",
+            members: "Foo.tsx, FooBar.tsx",
+            directory: "../Foo/",
+            target: "../Foo.tsx",
+          },
+        },
+      ],
+    },
+    {
+      code,
+      filename: fixture("component-suffix/BarFoo.tsx"),
+      errors: [
+        {
+          messageId: "leakedNamespace",
+          data: {
+            direction: "suffix",
+            token: "Foo",
+            members: "BarFoo.tsx, BazFoo.tsx",
+            target: "foo/Bar.tsx",
+          },
+        },
+      ],
+    },
+    {
+      code,
+      filename: fixture("grouping-suffix/components/BarFoo.tsx"),
+      errors: [
+        {
+          messageId: "leakedNamespace",
+          data: {
+            direction: "suffix",
+            token: "Foo",
+            members: "BarFoo.tsx, BazFoo.tsx",
+            target: "../foo/Bar.tsx",
+          },
+        },
+      ],
+    },
+    {
+      code,
+      filename: fixture("grouping-suffix-hooks/hooks/useBarFoo.ts"),
+      errors: [
+        {
+          messageId: "leakedNamespace",
+          data: {
+            direction: "suffix",
+            token: "Foo",
+            members: "useBarFoo.ts, useBazFoo.ts",
+            target: "../foo/hooks/useBar.ts",
+          },
+        },
+      ],
+    },
+    {
+      code,
+      filename: fixture("both-directions/BarFoo.tsx"),
+      errors: [
+        {
+          messageId: "leakedNamespace",
+          data: {
+            direction: "prefix",
+            token: "Bar",
+            members: "BarBaz.tsx, BarFoo.tsx",
+            target: "bar/Foo.tsx",
+          },
+        },
+        {
+          messageId: "leakedNamespace",
+          data: {
+            direction: "suffix",
+            token: "Foo",
+            members: "BarFoo.tsx, BazFoo.tsx",
+            target: "foo/Bar.tsx",
           },
         },
       ],
