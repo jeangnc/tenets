@@ -13,7 +13,7 @@ The coding principles I hold across projects, enforced as ESLint rules and golan
 | Compose components, not render props | [`no-render-prop`](docs/rules/no-render-prop.md) | |
 | Styles stay predictable | [`no-important-tailwind`](docs/rules/no-important-tailwind.md), [`no-tailwind-space-between`](docs/rules/no-tailwind-space-between.md), [`no-duplicate-class-string`](docs/rules/no-duplicate-class-string.md) | |
 | Lists own their empty state | [`no-flashlist-empty-component`](docs/rules/no-flashlist-empty-component.md) | |
-| Code sits under its nearest owner | `eslint-plugin-tenets/placement` | |
+| Code lives under its nearest owner | [`eslint-plugin-tenets/placement`](docs/placement.md) | |
 
 ## ESLint
 
@@ -39,6 +39,8 @@ export default [
 Presets: `recommended`, `typed`, `react`, `react-native`, `tailwind`. `readabilityRules` needs `eslint-plugin-sonarjs`.
 
 ## Placement
+
+A whole-graph check, run as a script. See [docs/placement.md](docs/placement.md).
 
 ```js
 import ts from "typescript";
