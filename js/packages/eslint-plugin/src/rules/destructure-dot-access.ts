@@ -7,7 +7,19 @@ type Scope = TSESLint.Scope.Scope;
 type MemberAccess = TSESTree.MemberExpression | TSESTree.JSXMemberExpression;
 
 const liveAccessorHooks = new Set(["useRef", "useSharedValue"]);
-const defaultAllowedBases = ["screen", "React", "z", "vi", "expect"];
+const classInstanceHooks = new Set(["useQueryClient"]);
+const defaultAllowedBases = [
+  "screen",
+  "fireEvent",
+  "userEvent",
+  "React",
+  "z",
+  "vi",
+  "expect",
+  "it",
+  "test",
+  "describe",
+];
 
 export const destructureDotAccess = createRule<Options, "destructure">({
   name: "destructure-dot-access",
@@ -79,7 +91,12 @@ function isTracked(variable: Variable): boolean {
   if (definition.type === "ImportBinding") return true;
   if (definition.type !== "Variable" || definition.node.id.type !== "Identifier") return false;
   const hook = calleeName(definition.node.init);
-  return hook !== null && /^use[A-Z]/.test(hook) && !liveAccessorHooks.has(hook);
+  return (
+    hook !== null &&
+    /^use[A-Z]/.test(hook) &&
+    !liveAccessorHooks.has(hook) &&
+    !classInstanceHooks.has(hook)
+  );
 }
 
 function calleeName(init: TSESTree.Expression | null): string | null {

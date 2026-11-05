@@ -12,6 +12,10 @@ ruleTester.run("destructure-dot-access", destructureDotAccess, {
     "import { z } from 'zod'; z.string(); z.number();",
     "import { vi } from 'vitest'; vi.mock('a'); vi.fn();",
     "import { expect } from 'vitest'; expect.any(String); expect.objectContaining({});",
+    "import { fireEvent } from 'x'; fireEvent.click(a); fireEvent.change(b);",
+    "import userEvent from 'x'; userEvent.setup(); userEvent.setup();",
+    "import { it, test, describe } from 'vitest'; it.each([])('a'); it.skip('b'); test.each([])('c'); test.todo('d'); describe.each([])('e'); describe.skip('f');",
+    "function C() { const client = useQueryClient(); client.invalidateQueries(); client.setQueryData(); }",
     { code: "import * as format from './format'; format.money(); format.date();", options: [{ allowBase: ["format"] }] },
     {
       code: "function C() { const t = useThing(); return t.a + t.b; }",

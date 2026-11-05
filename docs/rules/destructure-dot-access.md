@@ -12,7 +12,7 @@ const { isLoading, data } = useEntries();
 return isLoading ? null : data;                   // ✓
 ```
 
-Skipped: `useRef` and `useSharedValue` returns (their `.current` / `.value` is a live accessor), and the bases `screen`, `React`, `z`, `vi`, and `expect`, whose members are meant to be dot-accessed (`vi.mock` must stay a call on `vi` to be hoisted).
+Skipped: `useRef` and `useSharedValue` returns (their `.current` / `.value` is a live accessor), `useQueryClient` returns (a class instance whose methods lose `this` when destructured), and the bases `screen`, `fireEvent`, `userEvent`, `React`, `z`, `vi`, `expect`, `it`, `test`, and `describe`, whose members are meant to be dot-accessed (`vi.mock` must stay a call on `vi` to be hoisted).
 
 ## Options
 
