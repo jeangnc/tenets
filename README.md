@@ -7,7 +7,7 @@ The coding principles I hold across projects, enforced as ESLint rules and golan
 | Behavior lives with the data it reads | [`feature-envy`](docs/rules/feature-envy.md) | `featureenvy` |
 | A repeated prefix is a leaked namespace | [`leaked-namespace`](docs/rules/leaked-namespace.md) | `leakednamespace` |
 | Name what you read once | [`destructure-dot-access`](docs/rules/destructure-dot-access.md), [`destructure-jsx-dot-access`](docs/rules/destructure-jsx-dot-access.md) | |
-| Folders declare what they hold | [`folder-conventions`](docs/rules/folder-conventions.md) | |
+| A folder's name is a promise about its contents | [`folder-conventions`](docs/rules/folder-conventions.md) | |
 | A feature reaches itself relatively | [`relative-feature-imports`](docs/rules/relative-feature-imports.md) | |
 | Format through one helper | [`no-direct-intl-format`](docs/rules/no-direct-intl-format.md) | |
 | Compose components, not render props | [`no-render-prop`](docs/rules/no-render-prop.md) | |
