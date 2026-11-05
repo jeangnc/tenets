@@ -72,6 +72,45 @@ func addressOfAccount(a *Account) *int { return &a.Balance }
 	}
 }
 
+func TestAnalyzer_SkipsFunctionsThatInspectASecondParameterWithoutSelectingIt(t *testing.T) {
+	declarations := `package fixture
+type Account struct { Balance int }
+func (a Account) Equal(other Account) bool { return a.Balance == other.Balance }
+type Code string
+type Codes []Code
+type Delta int
+`
+	for name, function := range map[string]string{
+		"dereference": `func equalAccounts(a, b *Account) bool { return a.Equal(*b) }`,
+		"switch":      `func balanceByCode(a Account, code Code) int { switch code { case "x": return a.Balance }; return 0 }`,
+		"comparison":  `func balanceIfCode(a Account, code Code) int { if code == "x" { return a.Balance }; return 0 }`,
+		"range":       `func balanceTimesCodes(a Account, codes Codes) int { n := 0; for range codes { n += a.Balance }; return n }`,
+		"negation":    `func balanceMinus(a Account, d Delta) int { return a.Balance + int(-d) }`,
+		"index":       `func balanceIfFirst(a Account, codes Codes) int { if codes[0] == "" { return 0 }; return a.Balance }`,
+	} {
+		if got := analyzeSource(t, "sample.go", declarations+function+"\n"); len(got) != 0 {
+			t.Fatalf("%s: got %d diagnostics, want none", name, len(got))
+		}
+	}
+}
+
+func TestAnalyzer_ReportsWhenTheSecondParameterIsOnlyNilCheckedOrWritten(t *testing.T) {
+	declarations := `package fixture
+type Account struct { Balance int }
+type Ledger struct { Total int }
+type Totals map[string]int
+`
+	for name, function := range map[string]string{
+		"nil check":   `func balanceIfLedger(a Account, l *Ledger) int { if l == nil { return 0 }; return a.Balance }`,
+		"dereference": `func copyBalance(a Account, l *Ledger) { *l = Ledger{Total: a.Balance} }`,
+		"index":       `func copyBalances(a Account, totals Totals) { totals["a"] = a.Balance }`,
+	} {
+		if got := analyzeSource(t, "sample.go", declarations+function+"\n"); len(got) != 1 {
+			t.Fatalf("%s: got %d diagnostics, want 1", name, len(got))
+		}
+	}
+}
+
 func TestAnalyzer_SkipsTestsAndGeneratedFiles(t *testing.T) {
 	source := "package fixture\ntype Account struct { Balance int }\nfunc balanceOfAccount(a Account) int { return a.Balance }\n"
 	for _, tc := range []struct {

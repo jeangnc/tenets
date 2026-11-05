@@ -100,27 +100,18 @@ func (p *plugin) soleReadOwner(pass *analysis.Pass, function *ast.FuncDecl) *typ
 	if len(parameters) == 0 {
 		return nil
 	}
-	written := writtenSelectors(function.Body)
+	written := writtenTargets(function.Body)
 	var read []types.Object
 	ast.Inspect(function.Body, func(node ast.Node) bool {
-		selector, ok := node.(*ast.SelectorExpr)
-		if !ok {
-			return true
-		}
-		if _, skip := written[selector]; skip {
-			return true
-		}
-		selection := pass.TypesInfo.Selections[selector]
-		if selection == nil || selection.Kind() == types.MethodExpr {
-			return true
-		}
-		identifier := baseIdentifier(selector.X)
-		if identifier == nil {
-			return true
-		}
-		object := pass.TypesInfo.Uses[identifier]
-		if _, isParameter := parameters[object]; isParameter && !slices.Contains(read, object) {
-			read = append(read, object)
+		for _, value := range inspectedValues(pass, node, written) {
+			identifier := baseIdentifier(value)
+			if identifier == nil {
+				continue
+			}
+			object := pass.TypesInfo.Uses[identifier]
+			if _, isParameter := parameters[object]; isParameter && !slices.Contains(read, object) {
+				read = append(read, object)
+			}
 		}
 		return true
 	})
@@ -128,6 +119,69 @@ func (p *plugin) soleReadOwner(pass *analysis.Pass, function *ast.FuncDecl) *typ
 		return nil
 	}
 	return parameters[read[0]]
+}
+
+func inspectedValues(pass *analysis.Pass, node ast.Node, written map[ast.Expr]struct{}) []ast.Expr {
+	if expression, ok := node.(ast.Expr); ok {
+		if _, skip := written[expression]; skip {
+			return nil
+		}
+	}
+	switch expression := node.(type) {
+	case *ast.SelectorExpr:
+		selection := pass.TypesInfo.Selections[expression]
+		if selection == nil || selection.Kind() == types.MethodExpr {
+			return nil
+		}
+		return []ast.Expr{expression.X}
+	case *ast.StarExpr:
+		return []ast.Expr{expression.X}
+	case *ast.IndexExpr:
+		return []ast.Expr{expression.X}
+	case *ast.RangeStmt:
+		return []ast.Expr{expression.X}
+	case *ast.SwitchStmt:
+		return operandValues(pass, expression.Tag)
+	case *ast.UnaryExpr:
+		if expression.Op == token.AND {
+			return nil
+		}
+		return operandValues(pass, expression.X)
+	case *ast.BinaryExpr:
+		if isNil(pass, expression.X) || isNil(pass, expression.Y) {
+			return nil
+		}
+		return operandValues(pass, expression.X, expression.Y)
+	}
+	return nil
+}
+
+func operandValues(pass *analysis.Pass, operands ...ast.Expr) []ast.Expr {
+	var values []ast.Expr
+	for _, operand := range operands {
+		identifier, ok := ast.Unparen(operand).(*ast.Ident)
+		if !ok {
+			continue
+		}
+		if object := pass.TypesInfo.Uses[identifier]; object != nil && !isPointer(object.Type()) {
+			values = append(values, identifier)
+		}
+	}
+	return values
+}
+
+func isNil(pass *analysis.Pass, expression ast.Expr) bool {
+	identifier, ok := ast.Unparen(expression).(*ast.Ident)
+	if !ok {
+		return false
+	}
+	_, isNilObject := pass.TypesInfo.Uses[identifier].(*types.Nil)
+	return isNilObject
+}
+
+func isPointer(t types.Type) bool {
+	_, ok := types.Unalias(t).(*types.Pointer)
+	return ok
 }
 
 func (p *plugin) ownableParameters(pass *analysis.Pass, function *ast.FuncDecl) map[types.Object]*types.Named {
@@ -192,8 +246,8 @@ func declaredType(t types.Type) *types.Named {
 	}
 }
 
-func writtenSelectors(body *ast.BlockStmt) map[*ast.SelectorExpr]struct{} {
-	written := make(map[*ast.SelectorExpr]struct{})
+func writtenTargets(body *ast.BlockStmt) map[ast.Expr]struct{} {
+	written := make(map[ast.Expr]struct{})
 	ast.Inspect(body, func(node ast.Node) bool {
 		switch expression := node.(type) {
 		case *ast.AssignStmt:
@@ -212,9 +266,23 @@ func writtenSelectors(body *ast.BlockStmt) map[*ast.SelectorExpr]struct{} {
 	return written
 }
 
-func markChain(written map[*ast.SelectorExpr]struct{}, target ast.Expr) {
-	for selector, ok := target.(*ast.SelectorExpr); ok; selector, ok = selector.X.(*ast.SelectorExpr) {
-		written[selector] = struct{}{}
+func markChain(written map[ast.Expr]struct{}, target ast.Expr) {
+	for {
+		switch typ := target.(type) {
+		case *ast.SelectorExpr:
+			written[typ] = struct{}{}
+			target = typ.X
+		case *ast.StarExpr:
+			written[typ] = struct{}{}
+			target = typ.X
+		case *ast.IndexExpr:
+			written[typ] = struct{}{}
+			target = typ.X
+		case *ast.ParenExpr:
+			target = typ.X
+		default:
+			return
+		}
 	}
 }
 

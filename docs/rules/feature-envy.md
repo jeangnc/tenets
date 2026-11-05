@@ -50,6 +50,8 @@ Messages name the feature relative to that same base, e.g. `src/features/ledger`
 
 A golangci-lint module plugin. It flags a free function whose only read parameter is a named type from this repository, when that type's package already imports everything else the function needs. The fix is a method on that type. Tests, generated files, generic functions, and constructors are skipped.
 
+A parameter counts as read when the function inspects its value: it selects a field or method, dereferences it, indexes or ranges over it, switches on it, or uses it as an operand. Passing it along, returning it, comparing a pointer, comparing against `nil`, and assigning through it do not count.
+
 | Setting | Required | Meaning |
 |---|---|---|
 | `module` | yes | Import path prefix of this repository's packages. Types outside it are never owners. |
