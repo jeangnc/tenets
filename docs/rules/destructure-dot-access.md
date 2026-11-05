@@ -1,6 +1,6 @@
 # destructure-dot-access
 
-Flags a hook return or imported namespace that is dot-accessed `minCount` or more times in the same scope.
+Flags a hook return dot-accessed `minCount` or more times, or an import dot-accessed `minCount` or more times anywhere in the module.
 
 **Tenet:** call sites read flat. Name what you use once, at the top, instead of reaching into the same object repeatedly.
 
