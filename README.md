@@ -43,16 +43,16 @@ version: v2.7.0
 plugins:
   - module: github.com/jeangnc/tenets/go
     import: github.com/jeangnc/tenets/go/featureenvy
-    version: v0.3.0
+    version: v0.3.1
   - module: github.com/jeangnc/tenets/go
     import: github.com/jeangnc/tenets/go/filestutter
-    version: v0.3.0
+    version: v0.3.1
   - module: github.com/jeangnc/tenets/go
     import: github.com/jeangnc/tenets/go/namestutter
-    version: v0.3.0
+    version: v0.3.1
   - module: github.com/jeangnc/tenets/go
     import: github.com/jeangnc/tenets/go/namelen
-    version: v0.3.0
+    version: v0.3.1
 ```
 
 Build with `golangci-lint custom`, then run `./custom-gcl run`. Settings are in each rule's doc. [`go/golangci.base.yml`](go/golangci.base.yml) is the reference config for third-party linters.

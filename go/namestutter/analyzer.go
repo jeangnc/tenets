@@ -136,7 +136,7 @@ func camel(words []string) string {
 	var builder strings.Builder
 	builder.WriteString(strings.ToLower(words[0]))
 	for _, word := range words[1:] {
-		builder.WriteString(strings.ToUpper(word[:1]) + strings.ToLower(word[1:]))
+		builder.WriteString(strings.ToUpper(word[:1]) + word[1:])
 	}
 	return builder.String()
 }
