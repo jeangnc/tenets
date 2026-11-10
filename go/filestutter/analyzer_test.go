@@ -1,4 +1,4 @@
-package leakednamespace
+package filestutter
 
 import (
 	"go/ast"

@@ -1,4 +1,4 @@
-package leakednamespace
+package filestutter
 
 import (
 	"bytes"
@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	register.Plugin("leakednamespace", New)
+	register.Plugin("filestutter", New)
 }
 
 type finding struct {
@@ -35,8 +35,8 @@ func New(raw any) (register.LinterPlugin, error) {
 
 func (p *plugin) BuildAnalyzers() ([]*analysis.Analyzer, error) {
 	return []*analysis.Analyzer{{
-		Name: "leakednamespace",
-		Doc:  "find sibling Go filenames that repeat a namespace prefix or suffix",
+		Name: "filestutter",
+		Doc:  "find sibling Go filenames that repeat a word",
 		Run:  p.run,
 	}}, nil
 }

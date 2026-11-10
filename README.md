@@ -5,7 +5,7 @@ The coding principles I hold across projects, enforced as ESLint rules and golan
 | Tenet | ESLint (`eslint-plugin-tenets`) | Go (`github.com/jeangnc/tenets/go`) |
 |---|---|---|
 | Behavior lives with the data it reads | [`feature-envy`](docs/rules/feature-envy.md) | `featureenvy` |
-| A repeated prefix is a leaked namespace | [`leaked-namespace`](docs/rules/leaked-namespace.md) | `leakednamespace` |
+| A repeated word is a leaked namespace | [`file-stutter`](docs/rules/file-stutter.md) | [`filestutter`](docs/rules/file-stutter.md), [`namestutter`](docs/rules/name-stutter.md), [`namelen`](docs/rules/name-length.md) |
 | Name what you read once | [`destructure-dot-access`](docs/rules/destructure-dot-access.md), [`destructure-jsx-dot-access`](docs/rules/destructure-jsx-dot-access.md) | |
 | A folder's name is a promise about its contents | [`folder-conventions`](docs/rules/folder-conventions.md) | |
 | A feature reaches itself relatively | [`relative-feature-imports`](docs/rules/relative-feature-imports.md) | |
@@ -43,10 +43,16 @@ version: v2.7.0
 plugins:
   - module: github.com/jeangnc/tenets/go
     import: github.com/jeangnc/tenets/go/featureenvy
-    version: v0.2.2
+    version: v0.3.0
   - module: github.com/jeangnc/tenets/go
-    import: github.com/jeangnc/tenets/go/leakednamespace
-    version: v0.2.2
+    import: github.com/jeangnc/tenets/go/filestutter
+    version: v0.3.0
+  - module: github.com/jeangnc/tenets/go
+    import: github.com/jeangnc/tenets/go/namestutter
+    version: v0.3.0
+  - module: github.com/jeangnc/tenets/go
+    import: github.com/jeangnc/tenets/go/namelen
+    version: v0.3.0
 ```
 
 Build with `golangci-lint custom`, then run `./custom-gcl run`. Settings are in each rule's doc. [`go/golangci.base.yml`](go/golangci.base.yml) is the reference config for third-party linters.

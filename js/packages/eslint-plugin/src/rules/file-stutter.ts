@@ -19,7 +19,7 @@ type Cluster = { direction: Direction; token: string; members: string[] };
 type Siblings = { files: string[]; directories: Set<string> };
 
 type Advice =
-  | { messageId: "leakedNamespace"; target: string }
+  | { messageId: "fileStutter"; target: string }
   | { messageId: "namesNamespace"; directory: string }
   | { messageId: "namesNamespaceInGroupingFolder"; directory: string; target: string };
 
@@ -30,8 +30,8 @@ const allDirections: Direction[] = ["prefix", "suffix"];
 const hookMarker = /^use(?=[A-Z])/;
 const clusterText = "Files [{{members}}] repeat {{direction}} '{{token}}'";
 
-export const leakedNamespace = createRule<Options, Advice["messageId"]>({
-  name: "leaked-namespace",
+export const fileStutter = createRule<Options, Advice["messageId"]>({
+  name: "file-stutter",
   meta: {
     type: "suggestion",
     docs: {
@@ -56,7 +56,7 @@ export const leakedNamespace = createRule<Options, Advice["messageId"]>({
       },
     ],
     messages: {
-      leakedNamespace: `${clusterText}. Move this file to '{{target}}'.`,
+      fileStutter: `${clusterText}. Move this file to '{{target}}'.`,
       namesNamespace: `${clusterText}, which this file is named after. Move the others under '{{directory}}'.`,
       namesNamespaceInGroupingFolder: `${clusterText}, which this file is named after. Move this file to '{{target}}' and the others under '{{directory}}'.`,
     },
@@ -200,7 +200,7 @@ function adviceFor(basename: string, { direction, token, members }: Cluster, rol
   const directory = role === "hooks" ? `${hoist}${concept}/hooks/` : `${hoist}${concept}/`;
   const leaf = leafOf(basename, direction, token);
 
-  if (leaf !== null) return { messageId: "leakedNamespace", target: `${directory}${leaf}` };
+  if (leaf !== null) return { messageId: "fileStutter", target: `${directory}${leaf}` };
   if (!isInGroupingFolder) return { messageId: "namesNamespace", directory };
 
   const target = role === "hooks" ? `${directory}${basename}` : `${hoist}${basename}`;

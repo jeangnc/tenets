@@ -1,6 +1,6 @@
 # eslint-plugin-tenets
 
-ESLint rules for coding principles that hold across projects: feature envy, leaked namespaces, destructuring repeated reads, folder conventions, and more.
+ESLint rules for coding principles that hold across projects: feature envy, stuttering filenames, destructuring repeated reads, folder conventions, and more.
 
 ```js
 import tenets from "eslint-plugin-tenets";

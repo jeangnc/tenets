@@ -1,12 +1,12 @@
 import path from "node:path";
 import { ruleTester } from "../rule-tester.ts";
-import { leakedNamespace } from "./leaked-namespace.ts";
+import { fileStutter } from "./file-stutter.ts";
 
 const fixture = (file: string) =>
-  path.join(import.meta.dirname, "fixtures", "leaked-namespace", file);
+  path.join(import.meta.dirname, "fixtures", "file-stutter", file);
 const code = "export {};";
 
-ruleTester.run("leaked-namespace", leakedNamespace, {
+ruleTester.run("file-stutter", fileStutter, {
   valid: [
     { code, filename: fixture("lone/Solo.tsx") },
     { code, filename: fixture("short-token/Aa.tsx") },
@@ -35,7 +35,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("hook-prefix/useFooBar.ts"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "prefix",
             token: "Foo",
@@ -50,7 +50,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("hook-suffix/useBarFoo.ts"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "suffix",
             token: "Foo",
@@ -80,7 +80,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("pascal-prefix/FooBar.tsx"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "prefix",
             token: "Foo",
@@ -95,7 +95,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("bare-token/FooBar.tsx"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "prefix",
             token: "Foo",
@@ -125,7 +125,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("non-modules/FooBar.tsx"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "prefix",
             token: "Foo",
@@ -140,7 +140,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("lower-prefix/fooBar.ts"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "prefix",
             token: "foo",
@@ -155,7 +155,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("icons/UndoRedoToolbar.tsx"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "prefix",
             token: "Undo",
@@ -170,7 +170,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("camel-suffix/fooWire.ts"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "suffix",
             token: "Wire",
@@ -185,7 +185,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("snake-suffix/foo_wire.ts"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "suffix",
             token: "wire",
@@ -200,7 +200,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("snake-prefix/foo_bar.ts"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "prefix",
             token: "foo",
@@ -215,7 +215,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("prefix-and-suffix/fooWire.ts"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "prefix",
             token: "foo",
@@ -224,7 +224,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
           },
         },
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "suffix",
             token: "Wire",
@@ -239,7 +239,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("grouping-prefix/components/FooBar.tsx"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "prefix",
             token: "Foo",
@@ -254,7 +254,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("grouping-hooks/hooks/useFooBar.ts"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "prefix",
             token: "Foo",
@@ -269,7 +269,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("grouping-owner/components/FooBar.tsx"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "prefix",
             token: "Foo",
@@ -300,7 +300,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("component-suffix/BarFoo.tsx"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "suffix",
             token: "Foo",
@@ -315,7 +315,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("grouping-suffix/components/BarFoo.tsx"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "suffix",
             token: "Foo",
@@ -330,7 +330,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("grouping-suffix-hooks/hooks/useBarFoo.ts"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "suffix",
             token: "Foo",
@@ -345,7 +345,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
       filename: fixture("both-directions/BarFoo.tsx"),
       errors: [
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "prefix",
             token: "Bar",
@@ -354,7 +354,7 @@ ruleTester.run("leaked-namespace", leakedNamespace, {
           },
         },
         {
-          messageId: "leakedNamespace",
+          messageId: "fileStutter",
           data: {
             direction: "suffix",
             token: "Foo",

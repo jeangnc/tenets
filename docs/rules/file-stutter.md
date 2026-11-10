@@ -1,4 +1,4 @@
-# leaked-namespace
+# file-stutter
 
 Flags sibling files that repeat a filename prefix or suffix at a word boundary. Reports once per file per cluster.
 
@@ -36,19 +36,21 @@ Word boundaries are an uppercase letter, `_`, or the character after `_`, so `fo
 | `ignore` | `[]` | Regexes; matching basenames are skipped, e.g. `["Icon\\.tsx?$"]` |
 
 ```js
-"tenets/leaked-namespace": ["warn", { ignore: ["Icon\\.tsx?$"] }]
+"tenets/file-stutter": ["warn", { ignore: ["Icon\\.tsx?$"] }]
 ```
 
-## Go: `leakednamespace`
+Sibling identifiers in a package get the same check from [`name-stutter`](name-stutter.md).
 
-A golangci-lint module plugin. It flags sibling `.go` files in one package that share a leading or trailing `_`-separated word, such as `entry_list.go` and `entry_row.go`. Tests and generated files are skipped. It takes no settings; silence a deliberate cluster with an `exclusions.rules` entry naming `leakednamespace`.
+## Go: `filestutter`
+
+A golangci-lint module plugin. It flags sibling `.go` files in one package that share a leading or trailing `_`-separated word, such as `entry_list.go` and `entry_row.go`. Tests and generated files are skipped. It takes no settings; silence a deliberate cluster with an `exclusions.rules` entry naming `filestutter`.
 
 ```yaml
 # .golangci.yml
 linters:
-  enable: [leakednamespace]
+  enable: [filestutter]
   settings:
     custom:
-      leakednamespace:
+      filestutter:
         type: module
 ```

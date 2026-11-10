@@ -56,7 +56,9 @@ linters:
     - perfsprint
     - exhaustive
     - featureenvy
-    - leakednamespace
+    - filestutter
+    - namestutter
+    - namelen
   settings:
     custom:
       featureenvy:
@@ -64,9 +66,15 @@ linters:
         description: Find free functions that read only one type they could become a method of.
         settings:
           module: MODULE_PATH
-      leakednamespace:
+      filestutter:
         type: module
-        description: Find sibling Go files with repeated namespace prefixes or suffixes.
+        description: Find sibling Go files that repeat a filename word.
+      namestutter:
+        type: module
+        description: Find sibling identifiers that repeat a leading word or trailing words.
+      namelen:
+        type: module
+        description: Find identifiers with too many content words.
     dupl:
       threshold: 100
     funlen:
